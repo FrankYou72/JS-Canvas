@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+
+<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Chase</title>
+    <style>
+        h1#título {
+            align-content: center;
+            grid-template-areas:inherit;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="título"> Minha primeira Simulação em HTML5</h1>
+    <canvas id="tela" width="720" height="500">
+        Jesus
+    </canvas>
+    <script type="text/javascript">
+    var tela = document.getElementById('tela')
+    var c = tela.getContext('2d')
+    tela.height = innerHeight
+    tela.width = innerWidth
+
+    class Pulse{
+        constructor(ox, oy, color, radius){
+            this.color = color
+            this.ox = ox
+            this.oy = oy
+            this.radius = radius
+        }
+
+        draw(){
+            c.beginPath()
+            c.arc(this.ox, this.oy, this.radius, 0, Math.PI)
+            c.strokeStyle = this.color
+            c.stroke()
+        }
+
+        update(dS){
+            this.radius += dS
+            c.beginPath()
+            this.draw()
+        }
+
+        
+    }
+
+    class Wave {
+        constructor(wavelength, speed, color){
+            this.wavelength = wavelength
+            this.speed = speed
+            this.color = color
+            this.frequency = this.speed/this.wavelength
+            this.period = 1/this.frequency
+            this.origin = {
+                x: tela.width/2,
+                y: tela.height/2
+            }
+            this.pulses = [new Pulse(this.origin.x,
+                                            this.origin.y,
+                                            this.color,
+                                            this.wavelength)]
+        }
+
+        propagate(timer, dt){
+            if (this.pulses[this.pulses.length - 1].radius >= 2*this.wavelength){
+                this.pulses.push(new Pulse(this.origin.x,
+                                            this.origin.y,
+                                            this.color,
+                                            this.wavelength))
+            }
+            
+            this.pulses.forEach((pulse) => {pulse.update(this.speed*dt)})
+        }
+
+    }
+
+    var wave1 = new Wave(15, 1, 'red')
+    var wave2 = new Wave(20, 1, 'red')
+    wave2.origin = {x:tela.width/4,
+                    y: tela.height/2}
+    let timer = 0
+    let dt = 1
+
+    function animate(){
+        requestAnimationFrame(animate)
+        c.clearRect(0,0,tela.width, tela.height)
+        wave1.propagate(timer,dt)
+        wave2.propagate(timer, dt)
+        timer += dt
+    }
+
+    animate()
+    
+        
+    </script>
+</body>
+</html>
